@@ -76,29 +76,23 @@
 
 				// moving objects
 
-				var cube = new THREE.Cube( 40, 40, 40 );
 				var torus = new THREE.Torus( 40, 10 );
-				var sphere = new THREE.Sphere( 40 );
-				var cylinder = new THREE.Cylinder( 10, 10, 20, 40, 0, 0 );
 				mesh = new THREE.Mesh( torus, material1 );
 				scene.addChild( mesh );
 
-				boxMesh = new THREE.Mesh( cube, material2 );
-				scene.addChild( boxMesh );
-
 				new THREE.ShadowVolume( mesh );
-				new THREE.ShadowVolume( boxMesh );
 
 
 				// lights
 
 				light = new THREE.DirectionalLight( 0xffffff );
 				light.castShadow = true;
-				light.position.set( 0, 1, 0 );
+				light.position.set( 100, 0, 50 );
 				scene.addChild( light );
 
 				var cube = new THREE.Sphere( 5 );
 				lightCube = new THREE.Mesh( cube, material2 );
+				lightCube.position.copy( light.position );
 				scene.addChild( lightCube );
 
 
@@ -130,26 +124,6 @@
 			var t = 0;
 
 			function render() {
-
-				mesh.position.x = Math.sin( t ) * 100;
-				mesh.position.y = Math.cos( t ) * 100;
-
-				mesh.rotation.x += 0.5 * Math.PI / 180;
-				mesh.rotation.y += 1.0 * Math.PI / 180;
-				mesh.rotation.z += 1.5 * Math.PI / 180;
-
-				boxMesh.position.z = Math.sin( t ) * 100;
-				boxMesh.rotation.x = Math.sin( t ) * 180 * Math.PI / 180;
-
-				light.position.x = Math.sin( t );
-				light.position.y = 1.5;
-				light.position.z = Math.cos( t );
-
-				lightCube.position.copy( light.position );
-				lightCube.position.multiplyScalar( 200 );
-
-
-				t += 0.02;
 
 				camera.position.x += ( mouseX - camera.position.x ) * .05;
 				camera.position.y += ( - mouseY - camera.position.y ) * .05;

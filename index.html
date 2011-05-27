@@ -19,7 +19,7 @@
 		<script type="text/javascript" src="js/RequestAnimationFrame.js"></script>
 
 		<canvas id="canvas1" width="100" height="100"></canvas>
-		
+		<div id="projection"></div>
 		<div id="Visu3d"></div>
 
 		<script type="text/javascript">
@@ -41,17 +41,22 @@
 			}
 			img.src = 'testimg.png'; // Set source path
 
-			
+
+			/* Scene */
+			var scene;
+			var mesh, light, lightCube;
+
+			/* projection */
+			var cameraProj, rendererProj;
+			var containerProj;
 
 
-			/* Web Gl stuff */
-			var container;
-			var camera, scene, renderer;
-			var mesh, boxMesh, light, lightCube, light2, lightCube2, zmesh, lightMesh, geometry;
+			/* visu 3d */
+			var camera, renderer;
+			var visu3dcontainer;
 			var mouseX = 0, mouseY = 0;
 			var windowHalfX = window.innerWidth / 2;
 			var windowHalfY = window.innerHeight / 2;
-
 			document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
 			init();
@@ -59,7 +64,8 @@
 
 			function init() {
 
-				container = document.getElementById('Visu3d');
+				visu3dcontainer = document.getElementById('Visu3d');
+				containerProj = document.getElementById('projection');
 
 				camera = new THREE.Camera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
 				camera.position.z = 250;
@@ -118,7 +124,13 @@
 				renderer = new THREE.WebGLRenderer();
 				renderer.setClearColorHex( 0xaaaaaa, 1 );
 				renderer.setSize( window.innerWidth, window.innerHeight );
-				container.appendChild( renderer.domElement );
+				visu3dcontainer.appendChild( renderer.domElement );
+				
+				// renderer projection
+				rendererProj = new THREE.CanvasRenderer();
+				rendererProj.setClearColorHex( 0xFFFFFF, 1 );
+				rendererProj.setSize( 100, 100 );
+				containerProj.appendChild( rendererProj.domElement );
 			}
 
 
@@ -132,11 +144,12 @@
 				render();
 			}
 
-			var t = 0;
-
 			function render() {
 				camera.position.x += ( mouseX - camera.position.x ) * .05;
 				camera.position.y += ( - mouseY - camera.position.y ) * .05;
+
+				rendererProj.render( scene, camera);
+
 				renderer.render( scene, camera );
 			}
 

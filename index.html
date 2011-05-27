@@ -41,17 +41,16 @@
 			}
 			img.src = 'testimg.png'; // Set source path
 
+			/* our model */
+			var geometry;
+			init();
 
-			/* Scene */
-			var scene;
-			var mesh, light, lightCube;
-
-			/* projection */
-			var cameraProj, rendererProj;
-			var containerProj;
+			doProj();
 
 
 			/* visu 3d */
+			var scene;
+			var mesh, light, lightCube;
 			var camera, renderer;
 			var visu3dcontainer;
 			var mouseX = 0, mouseY = 0;
@@ -59,22 +58,43 @@
 			var windowHalfY = window.innerHeight / 2;
 			document.addEventListener( 'mousemove', onDocumentMouseMove, false );
 
-			init();
+			initVisu();
 			animate();
 
-			function init() {
 
-				visu3dcontainer = document.getElementById('Visu3d');
+			function init() {
+				geometry = new THREE.Torus( 40, 10 );
+			}
+
+			function doProj() {
+				var cameraProj, meshProj, sceneProj, rendererProj;
+				var containerProj;
+
+				cameraProj = new THREE.Camera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
+				cameraProj.position.z = 200;
+
+				meshProj = new THREE.Mesh(geometry, new THREE.MeshLambertMaterial( { color:0x000000 } ));
+
+				sceneProj = new THREE.Scene();
+				sceneProj.addChild( meshProj );
+
 				containerProj = document.getElementById('projection');
+
+				rendererProj = new THREE.CanvasRenderer();
+				rendererProj.setSize( 100, 100 );
+				containerProj.appendChild( rendererProj.domElement );
+				rendererProj.render( sceneProj, cameraProj);
+			}
+
+			function initVisu() {
+				visu3dcontainer = document.getElementById('Visu3d');
 
 				camera = new THREE.Camera( 60, window.innerWidth / window.innerHeight, 1, 10000 );
 				camera.position.z = 250;
 
 				scene = new THREE.Scene();
 
-
 				// world
-
 				var cube = new THREE.Cube( 300, 300, 10 );
 				var material0 = new THREE.MeshPhongMaterial( { color:0xff00ff } );
 				var material1 = new THREE.MeshLambertMaterial( { color:0x00ff00 } );
@@ -101,8 +121,7 @@
 
 				// moving objects
 
-				var torus = new THREE.Torus( 40, 10 );
-				mesh = new THREE.Mesh( torus, material1 );
+				mesh = new THREE.Mesh( geometry, material1 );
 				scene.addChild( mesh );
 
 				new THREE.ShadowVolume( mesh );
@@ -126,11 +145,6 @@
 				renderer.setSize( window.innerWidth, window.innerHeight );
 				visu3dcontainer.appendChild( renderer.domElement );
 				
-				// renderer projection
-				rendererProj = new THREE.CanvasRenderer();
-				rendererProj.setClearColorHex( 0xFFFFFF, 1 );
-				rendererProj.setSize( 100, 100 );
-				containerProj.appendChild( rendererProj.domElement );
 			}
 
 
@@ -147,8 +161,6 @@
 			function render() {
 				camera.position.x += ( mouseX - camera.position.x ) * .05;
 				camera.position.y += ( - mouseY - camera.position.y ) * .05;
-
-				rendererProj.render( scene, camera);
 
 				renderer.render( scene, camera );
 			}
